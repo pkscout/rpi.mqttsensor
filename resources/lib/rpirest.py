@@ -24,7 +24,8 @@ class PassSensorData:
         headers['Accept'] = 'application/json'
         headers['Authorization'] = 'Bearer %s' % config.Get('rest_token')
         self.JSONURL = url.URL('json', headers=headers)
-        self.RESTURL = 'http://%s:%s/api/states/%s' % (config.Get('rest_address'), config.Get('rest_port'), config.Get('rest_state'))
+        self.RESTURL = 'http://%s:%s/api/states/%s' % (config.Get(
+            'rest_address'), config.Get('rest_port'), config.Get('rest_state'))
 
     def Start(self):
         self.LW.log(['starting up PassSensorData'], 'info')
@@ -32,13 +33,15 @@ class PassSensorData:
         stored_humidity = None
         try:
             while self.KEEPRUNNING:
-                temperature = self.SENSOR.Temperature()
+                temperature = self._convert_temp(self.SENSOR.Temperature())
                 humidity = self.SENSOR.Humidity()
                 if temperature != stored_temp or humidity != stored_humidity:
                     stored_temp = temperature
                     stored_humidity = humidity
-                    payload = {'state':'data', 'attributes':{'temperature': temperature, 'humidity': humidity }}
-                    status, loglines, results = self.JSONURL.Post(self.RESTURL, data=json.dumps(payload))
+                    payload = {'state': 'data', 'attributes': {
+                        'temperature': temperature, 'humidity': humidity}}
+                    status, loglines, results = self.JSONURL.Post(
+                        self.RESTURL, data=json.dumps(payload))
                     self.LW.log(loglines)
                 time.sleep(self.READINGDELTA)
         except KeyboardInterrupt:
@@ -48,6 +51,10 @@ class PassSensorData:
             self.LW.log([traceback.format_exc()], 'error')
             print(traceback.format_exc())
 
+    def _convert_temp(self, temperature):
+        if config.Get('temp_scale').lower() == 'f':
+            return (temperature * 1.8) + 32
+        return temperature
 
     def _pick_sensor(self):
         self.LW.log(['setting up %s weather sensor' % self.WHICHSENSOR])

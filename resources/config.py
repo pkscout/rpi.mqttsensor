@@ -11,6 +11,7 @@ defaults = {'readingdelta': 2,
             'rest_port': 8123,
             'rest_state': 'sensor.rpi',
             'rest_token': '',
+            'temp_scale': 'F',
             'logbackups': 1,
             'debug': False,
             'testmode': False}
