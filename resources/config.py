@@ -10,7 +10,7 @@ defaults = {'readingdelta': 2,
             'rest_address': '',
             'rest_port': 8123,
             'rest_state': 'sensor.rpi',
-            'token': '',
+            'rest_token': '',
             'logbackups': 1,
             'debug': False,
             'testmode': False}
