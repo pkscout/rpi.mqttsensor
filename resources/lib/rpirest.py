@@ -30,31 +30,20 @@ class PassSensorData:
 
     def Start(self):
         self.LW.log(['starting up PassSensorData'], 'info')
-        stored_temp = None
-        stored_humidity = None
         try:
             while self.KEEPRUNNING:
                 temperature = self._convert_temp(self.SENSOR.Temperature())
                 humidity = self.SENSOR.Humidity()
-                if int(temperature) != stored_temp:
-                    stored_temp = int(temperature)
-                    payload = {'state': temperature, "attributes": {
-                        "unit_of_measurement": self.TEMPSCALE, "friendly_name": "RPI Sensor Temperature"}}
-                    status, loglines, results = self.JSONURL.Post(
-                        self.RESTURL + 'temp', data=json.dumps(payload))
-                    self.LW.log(loglines)
-                else:
-                    self.LW.log(['no change to temperature'])
-                if int(humidity) != stored_humidity:
-                    stored_humidity = int(humidity)
-                    payload = {'state': humidity, "attributes": {
-                        "unit_of_measurement": "%", "friendly_name": "RPI Sensor Humidity"}}
-                    status, loglines, results = self.JSONURL.Post(
-                        self.RESTURL + 'humidity', data=json.dumps(payload))
-                    self.LW.log(loglines)
-                else:
-                    self.LW.log(['no change to humidity'])
-
+                payload = {'state': temperature, "attributes": {
+                    "unit_of_measurement": self.TEMPSCALE, "friendly_name": "RPI Sensor Temperature"}}
+                status, loglines, results = self.JSONURL.Post(
+                    self.RESTURL + 'temp', data=json.dumps(payload))
+                self.LW.log(loglines)
+                payload = {'state': humidity, "attributes": {
+                    "unit_of_measurement": "%", "friendly_name": "RPI Sensor Humidity"}}
+                status, loglines, results = self.JSONURL.Post(
+                    self.RESTURL + 'humidity', data=json.dumps(payload))
+                self.LW.log(loglines)
                 time.sleep(self.READINGDELTA)
         except KeyboardInterrupt:
             self.KEEPRUNNING = False
