@@ -1,6 +1,6 @@
 # *  Credits:
 # *
-# *  v.2.0.1
+# *  v.2.0.2
 # *  original RPi Sensor classes by pkscout
 
 import datetime
@@ -63,7 +63,8 @@ class BME280Sensors:
         if not self.DATA:
             self._sample()
         else:
-            diff = datetime.datetime.now().replace(tzinfo=None) - self.DATA.timestamp.replace(tzinfo=None)
+            diff = datetime.datetime.now(
+                datetime.timezone.utc) - self.DATA.timestamp
             if diff.total_seconds() > 60:
                 self._sample()
 
